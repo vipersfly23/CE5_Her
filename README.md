@@ -12,5 +12,7 @@ go about initializing a register? What is the expected outcome of each step of t
 
 
   addi $s0,$0,44
+  
   addi $s1,$0,-37
+  
   sw $s2, 0x54($0)
