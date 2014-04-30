@@ -11,8 +11,8 @@ program in your README BOC Lesson 37 and include comments. Remember there is no 
 go about initializing a register? What is the expected outcome of each step of the program?
 
 
-  addi $s0,$0,44
+  * addi $s0,$0,44
   
-  addi $s1,$0,-37
+    addi $s1,$0,-37
   
-  sw $s2, 0x54($0)
+    sw $s2, 0x54($0) *
