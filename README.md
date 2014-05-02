@@ -13,6 +13,6 @@ go about initializing a register? What is the expected outcome of each step of t
 
   * addi $s0,$0,2c
   
-  *  addi $s1,$0,1311
+  *  addi $s1,$0,bd
   
   *  sw $s2, 0x54($0) 
