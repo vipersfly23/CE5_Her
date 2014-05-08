@@ -104,6 +104,12 @@ entity signext is -- sign extender
        y: out STD_LOGIC_VECTOR(31 downto 0));
 end;
 
+library IEEE; use IEEE.STD_LOGIC_1164.all;
+entity zeroExtend is -- sign extender
+  port(a: in  STD_LOGIC_VECTOR(15 downto 0);
+       y: out STD_LOGIC_VECTOR(31 downto 0));
+end;
+
 library IEEE; use IEEE.STD_LOGIC_1164.all;  use IEEE.STD_LOGIC_ARITH.all;
 entity flopr is -- flip-flop with synchronous reset
   generic(width: integer);
@@ -117,6 +123,15 @@ entity mux2 is -- two-input multiplexer
   generic(width: integer);
   port(d0, d1: in  STD_LOGIC_VECTOR(width-1 downto 0);
        s:      in  STD_LOGIC;
+       y:      out STD_LOGIC_VECTOR(width-1 downto 0));
+end;
+
+--creating mux for extend zero
+library IEEE; use IEEE.STD_LOGIC_1164.all;
+entity mux3 is -- two-input multiplexer
+  generic(width: integer);
+  port(d0, d1: in  STD_LOGIC_VECTOR(width-1 downto 0);
+       s:      in  STD_LOGIC_VECTOR(5 downto 0);
        y:      out STD_LOGIC_VECTOR(width-1 downto 0));
 end;
 
@@ -251,6 +266,11 @@ architecture struct of datapath is
     port(a: in  STD_LOGIC_VECTOR(15 downto 0);
          y: out STD_LOGIC_VECTOR(31 downto 0));
   end component;
+  
+  component zeroExtend
+    port(a: in  STD_LOGIC_VECTOR(15 downto 0);
+         y: out STD_LOGIC_VECTOR(31 downto 0));
+  end component;
   component flopr generic(width: integer);
     port(clk, reset: in  STD_LOGIC;
          d:          in  STD_LOGIC_VECTOR(width-1 downto 0);
@@ -261,10 +281,17 @@ architecture struct of datapath is
          s:      in  STD_LOGIC;
          y:      out STD_LOGIC_VECTOR(width-1 downto 0));
   end component;
+  
+    component mux3 generic(width: integer);
+    port(d0, d1: in  STD_LOGIC_VECTOR(width-1 downto 0);
+         s:      in  STD_LOGIC_VECTOR(5 downto 0);
+         y:      out STD_LOGIC_VECTOR(width-1 downto 0));
+  end component;
+  
   signal writereg: STD_LOGIC_VECTOR(4 downto 0);
   signal pcjump, pcnext, pcnextbr, pcplus4, pcbranch: STD_LOGIC_VECTOR(31 downto 0);
-  signal signimm, signimmsh: STD_LOGIC_VECTOR(31 downto 0);
-  signal srca, srcb, result: STD_LOGIC_VECTOR(31 downto 0);
+  signal signimm, signimmsh, zeroExt: STD_LOGIC_VECTOR(31 downto 0);
+  signal srca, srcb, result, srcb1: STD_LOGIC_VECTOR(31 downto 0);
 begin
   -- next PC logic
   pcjump <= pcplus4(31 downto 28) & instr(25 downto 0) & "00";
@@ -282,9 +309,12 @@ begin
                                       regdst, writereg);
   resmux: mux2 generic map(32) port map(aluout, readdata, memtoreg, result);
   se: signext port map(instr(15 downto 0), signimm);
+  ze: zeroExtend port map(instr(15 downto 0), zeroExt);
 
   -- ALU logic
-  srcbmux: mux2 generic map(32) port map(writedata, signimm, alusrc, srcb);
+ 
+  srcbmux: mux2 generic map(32) port map(writedata, srcb1, alusrc, srcb);
+  srcb1mux: mux3 generic map(32) port map(zeroExt, signimm, instr(31 downto 26), srcb1);
   mainalu:  alu port map(srca, srcb, alucontrol, aluout, zero);
 end;
 
@@ -341,6 +371,12 @@ begin
   y <= X"0000" & a when a(15) = '0' else X"ffff" & a; 
 end;
 
+
+architecture behave of zeroExtend is
+begin
+  y <= X"0000" & a; 
+end;
+
 architecture asynchronous of flopr is
 begin
   process(clk, reset) begin
@@ -354,4 +390,9 @@ end;
 architecture behave of mux2 is
 begin
   y <= d0 when s = '0' else d1;
+end;
+
+architecture behave of mux3 is
+begin
+  y <= d1 when s = "001101" else d0;
 end;
