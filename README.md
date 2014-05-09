@@ -13,6 +13,25 @@ go about initializing a register? What is the expected outcome of each step of t
 
   * addi $s0,$0,2c
   
+    *  HEX CODE: x"2010002C"
+  
   *  addi $s1,$0,bd
+ 
+    *  HEX CODE: x"2011ffdb"
   
   *  sw $s2, 0x54($0) 
+
+    *  HEX CODE: x"AC120054"
+    
+TASK #2: 
+
+This wave form is correct because as can be seen the two add functions are being ouputed to the ALU output. This snip is the full snip, so the full store word is diplayed in task #3, but even observing that, it's clear that the word is proper stored, hence the storage in memore displaying 7, and the memory signal signifying the succesful storage.
+
+
+Task #3:
+
+* Implement ori $S3, $S2, x8000
+
+
+
+
