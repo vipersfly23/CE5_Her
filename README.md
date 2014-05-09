@@ -44,7 +44,7 @@ Task #3:
     *  HEX CODE: x"AC120054"
     
     
-Codes in Mips Assembly:
+###Codes in Mips Assembly:
 
 1) addi $s0,$0,2c
 
@@ -56,7 +56,7 @@ Codes in Mips Assembly:
 
 5) ori $S3, $S2, x8000
     
-Codes in HEX / Binary:
+###Codes in HEX / Binary:
 
 1) x"2010002C"    /     00100000000100000000000000101100
 
@@ -94,7 +94,12 @@ Main Decoder:
 
 
 
+###Functionality:
 
+Verified with DR. NEEBEL in class that program works in compliance with the assignment.
+
+###Documentation:
+Received help from C3C Thompson. After redesigning the mips architecture multiple times, he showed me the more simple way to solve the task. C3C Terragnoli showed me how to implement a MUX. 
 
 
 
